@@ -1,0 +1,51 @@
+extends layout
+
+block head
+  meta(http-equiv="content-type", content="text/html; charset=UTF-8")
+  script(src="/js/jquery.js", charset="utf-8")
+
+block content
+
+  :stylus
+    h1, p
+      margin 5px
+    #form, #graph
+      position relative
+      width 800px
+      margin 0 auto
+      background #CCCCCC
+      padding 10px
+      margin-bottom 20px
+    table
+      border 1px solid black
+      text-align center
+      width 800px
+      margin 0 auto
+    td
+      border 1px solid black
+
+  #form
+      h1= title
+      a(href="/quit") Log out
+      div
+        table
+          thead
+            tr: th Timestamp 
+                th Value
+                th Operation
+          tbody
+            each item in metrics
+              tr 
+                td #{item.timestamp}
+                td #{item.value}
+                td 
+                  a(href="/deletemetric/timestamp=#{item.timestamp}") Delete
+      div
+        form(action='/addmetric',method='post')
+          label Value:
+          input(id='value',type='text',value='',placeholder='',name='value')
+          br
+          input#submit_ok(type='submit', value='OK')
+
+
+

@@ -1,0 +1,39 @@
+extends layout
+
+block head
+  meta(http-equiv="content-type", content="text/html; charset=UTF-8")
+  script(src="/js/jquery.js", charset="utf-8")
+
+block content
+
+  :stylus
+    h1, p
+      margin 5px
+    #form, #graph
+      position relative
+      width 800px
+      margin 0 auto
+      background #CCCCCC
+      padding 10px
+      margin-bottom 20px
+    #graph
+      height 400px
+    line path
+      fill none
+      stroke #000
+      shape-rendering crispEdges
+    .area
+      fill steelblue
+
+  #form
+    h1= title
+    p Welcome to #{title}
+    form(action='/login',method='post')
+          label username:
+          input(id='username',type='text',value='',placeholder='',name='username')
+          br
+          label password:
+          input(id='hidden_password',type='password',value='',placeholder='',name='password') 
+          br
+          input#login_ok(type='submit', value='OK')
+    a(href="/signup") SignUP
