@@ -1,4 +1,3 @@
-
 http = require 'http'
 stylus = require 'stylus'
 express = require 'express'
@@ -39,14 +38,27 @@ app.use (req, res, next) ->
 
 
 app.get '/', (req, res) ->
-  res.render 'index', title: 'Metrics'
+  console.log "app.get /"
+  if req.session.id? and req.session.id isnt "undefined"
+    username = req.session.id
+    console.log "if session yes " + req.session.id
+    userdb.get username, (err, data) ->
+      return next err if err
+      if username? and username  isnt "undefined"
+        metrics.get username, (err, values) ->
+          return next err if err
+          console.log values
+          res.render 'user', title: 'Your metrics, ' + username, metrics: values
+  else
+    console.log "else session no " + req.session.id
+    res.render 'login', title: 'login'
 
 app.get '/login', (req, res) ->
   if req.session.id? and req.session.id isnt "undefined"
     console.log 'login:' + req.session.id
     metrics.get req.session['id'], (err, values) ->
         return next err if err
-        res.render 'user', title: 'Timeserious for USER '+ req.session['id'], metrics: values
+        res.render 'user', title: 'Your metrics, ' + req.session['id'], metrics: values
   else
     res.render 'login', title: 'Identification'
 
@@ -64,7 +76,7 @@ app.post '/signup', (req, res) ->
   if username? and password?
     userdb.get username, (err, data) ->
       if data?
-        res.render 'signup', title: 'The account exists'
+        res.render 'signup', title: 'The account already exists'
       else
         userdb.put username, password
         res.render 'login', title: 'Identification'
@@ -82,7 +94,7 @@ app.post '/addmetric', (req, res) ->
       return next err if err
       metrics.get req.session['id'], (err, values) ->
         return next err if err
-        res.render 'user', title: 'Timeserious for USER '+ req.session['id'], metrics: values
+        res.render 'user', title: 'Your metrics, ' + req.session['id'], metrics: values
   else
     res.render 'login', title: 'Does not connect or expired'
 
@@ -95,7 +107,7 @@ app.get '/deletemetric/timestamp=:tt', (req,res) ->
       return next err if err
     metrics.get req.session['id'], (err, values) ->
         return next err if err
-        res.render 'user', title: 'Timeserious for USER '+ req.session['id'], metrics: values
+        res.render 'user', title: 'Your metrics, ' + req.session['id'], metrics: values
   else
     res.render 'login', title: 'Does not connect or expired'
 
@@ -124,7 +136,7 @@ app.post '/login', (req, res, next) ->
         metrics.get username, (err, values) ->
           return next err if err
           console.log values
-          res.render 'user', title: 'Timeserious for USER '+ username, metrics: values
+          res.render 'user', title: 'Your metrics, '+ username, metrics: values
       else
         res.render 'login', title: 'Please login at first'
     else
